@@ -19,41 +19,31 @@ public class CarController : MonoBehaviour
     public float CurrentSpeed { get; private set; }
     public bool IsRunning { get; set; } = true;
 
-    Rigidbody rb;
-    float steerInput;
-    bool nitro;
-
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
     }
 
     void Update()
     {
-        steerInput = Input.GetAxis("Horizontal");
-        nitro = Input.GetKey(KeyCode.Space);
+        float steerInput = Input.GetAxis("Horizontal");
+        bool nitro = Input.GetKey(KeyCode.Space);
+
+        float targetSpeed = IsRunning ? maxSpeed * (nitro ? nitroMultiplier : 1f) : 0f;
+        float rate = IsRunning ? acceleration : acceleration * 2f;
+        CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * Time.deltaTime);
+
+        Vector3 pos = transform.position;
+        pos.z += CurrentSpeed * Time.deltaTime;
+        if (IsRunning)
+            pos.x = Mathf.Clamp(pos.x + steerInput * steerSpeed * Time.deltaTime, -roadHalfWidth, roadHalfWidth);
+        transform.position = pos;
 
         if (model != null)
         {
             Quaternion target = Quaternion.Euler(0f, steerInput * tiltAngle, 0f);
             model.localRotation = Quaternion.Lerp(model.localRotation, target, 10f * Time.deltaTime);
         }
-    }
-
-    void FixedUpdate()
-    {
-        if (!IsRunning)
-        {
-            CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, 0f, acceleration * 2f * Time.fixedDeltaTime);
-            return;
-        }
-
-        float targetSpeed = maxSpeed * (nitro ? nitroMultiplier : 1f);
-        CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, acceleration * Time.fixedDeltaTime);
-
-        Vector3 pos = rb.position;
-        pos.z += CurrentSpeed * Time.fixedDeltaTime;
-        pos.x = Mathf.Clamp(pos.x + steerInput * steerSpeed * Time.fixedDeltaTime, -roadHalfWidth, roadHalfWidth);
-        rb.MovePosition(pos);
     }
 }
