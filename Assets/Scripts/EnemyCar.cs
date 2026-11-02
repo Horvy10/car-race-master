@@ -9,7 +9,7 @@ public class EnemyCar : MonoBehaviour
     public float acceleration = 12f;
 
     [Header("Pruhy")]
-    public float[] lanes = { -2.5f, 0f, 2.5f };
+    public float[] lanes = { -3f, -1f, 1f, 3f };
     public float laneChangeSpeed = 6f;
     public Vector2 laneChangeInterval = new Vector2(3f, 7f);
 
@@ -18,11 +18,14 @@ public class EnemyCar : MonoBehaviour
 
     [Header("Fér hra (rubber band)")]
     public Transform player;
-    public float rubberBand = 0.25f;
+    public float rubberBand = 0.12f;
+    public float rubberBandDelay = 5f;   // koľko sekúnd po štarte nič nedoťahuje
+    public float rubberBandRamp = 5f;    // za koľko sekúnd sa naplno zapne
+    [Range(0f, 1f)] public float slowDownFactor = 0.25f; // súper vpredu sa spomaľuje len slabo
 
     [Header("Charakter súpera (každý iný)")]
-    public Vector2 speedMultiplierRange = new Vector2(0.9f, 1.1f);
-    public Vector2 preferredGapRange = new Vector2(-30f, 30f);
+    public Vector2 speedMultiplierRange = new Vector2(0.98f, 1.02f);
+    public Vector2 preferredGapRange = new Vector2(-5f, 20f);
 
     [Header("Vizuál")]
     public Transform model;
@@ -35,6 +38,7 @@ public class EnemyCar : MonoBehaviour
     float nextChangeTime;
     float speedMultiplier;
     float preferredGap;
+    float runTime;
 
     void Awake()
     {
@@ -52,6 +56,8 @@ public class EnemyCar : MonoBehaviour
 
     void Update()
     {
+        if (IsRunning) runTime += Time.deltaTime;
+
         float targetSpeed = 0f;
 
         if (IsRunning)
@@ -91,9 +97,16 @@ public class EnemyCar : MonoBehaviour
     float RubberBandFactor()
     {
         if (player == null) return 1f;
-        // kladné = súper je pod svojou cieľovou polohou a zrýchli
+
+        // po štarte sa rubber band zapína postupne
+        float ramp = Mathf.Clamp01((runTime - rubberBandDelay) / Mathf.Max(0.01f, rubberBandRamp));
+
+        // kladné = súper je za svojou cieľovou polohou, záporné = je pred ňou
         float diff = (player.position.z + preferredGap) - transform.position.z;
-        return 1f + Mathf.Clamp(diff / 40f, -1f, 1f) * rubberBand;
+        float k = Mathf.Clamp(diff / 40f, -1f, 1f);
+        if (k < 0f) k *= slowDownFactor;   // pred tebou sa len mierne spomalí
+
+        return 1f + k * rubberBand * ramp;
     }
 
     bool LaneBlocked(float x)
