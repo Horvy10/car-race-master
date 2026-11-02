@@ -19,9 +19,9 @@ public class EnemyCar : MonoBehaviour
     [Header("Fér hra (rubber band)")]
     public Transform player;
     public float rubberBand = 0.12f;
-    public float rubberBandDelay = 5f;   // koľko sekúnd po štarte nič nedoťahuje
-    public float rubberBandRamp = 5f;    // za koľko sekúnd sa naplno zapne
-    [Range(0f, 1f)] public float slowDownFactor = 0.25f; // súper vpredu sa spomaľuje len slabo
+    public float rubberBandDelay = 5f;
+    public float rubberBandRamp = 5f;
+    [Range(0f, 1f)] public float slowDownFactor = 0.25f;
 
     [Header("Charakter súpera (každý iný)")]
     public Vector2 speedMultiplierRange = new Vector2(0.98f, 1.02f);
@@ -81,15 +81,35 @@ public class EnemyCar : MonoBehaviour
         CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * Time.deltaTime);
 
         Vector3 pos = transform.position;
-        pos.z += CurrentSpeed * Time.deltaTime;
-        pos.x = Mathf.MoveTowards(pos.x, targetX, laneChangeSpeed * Time.deltaTime);
+        float blockerSpeed;
+
+        // 1) dopredu
+        Vector3 tryZ = new Vector3(pos.x, pos.y, pos.z + CurrentSpeed * Time.deltaTime);
+        if (CarCollision.Blocked(transform, tryZ, Vector3.forward, out blockerSpeed))
+            CurrentSpeed = Mathf.Min(CurrentSpeed, blockerSpeed);
+        else
+            pos = tryZ;
+
+        // 2) do strany
+        float newX = Mathf.MoveTowards(pos.x, targetX, laneChangeSpeed * Time.deltaTime);
+        float dx = newX - pos.x;
+        if (Mathf.Abs(dx) > 0.0001f)
+        {
+            Vector3 tryX = new Vector3(newX, pos.y, pos.z);
+            Vector3 dir = dx > 0f ? Vector3.right : Vector3.left;
+            if (CarCollision.Blocked(transform, tryX, dir, out blockerSpeed))
+                targetX = NearestLane(pos.x);   // zablokované, zostaň v pruhu
+            else
+                pos = tryX;
+        }
+
         transform.position = pos;
 
         if (model != null)
         {
             float diff = targetX - pos.x;
-            float dir = Mathf.Abs(diff) > 0.05f ? Mathf.Sign(diff) : 0f;
-            Quaternion t = Quaternion.Euler(0f, dir * tiltAngle, 0f);
+            float d = Mathf.Abs(diff) > 0.05f ? Mathf.Sign(diff) : 0f;
+            Quaternion t = Quaternion.Euler(0f, d * tiltAngle, 0f);
             model.localRotation = Quaternion.Lerp(model.localRotation, t, 10f * Time.deltaTime);
         }
     }
@@ -98,13 +118,11 @@ public class EnemyCar : MonoBehaviour
     {
         if (player == null) return 1f;
 
-        // po štarte sa rubber band zapína postupne
         float ramp = Mathf.Clamp01((runTime - rubberBandDelay) / Mathf.Max(0.01f, rubberBandRamp));
 
-        // kladné = súper je za svojou cieľovou polohou, záporné = je pred ňou
         float diff = (player.position.z + preferredGap) - transform.position.z;
         float k = Mathf.Clamp(diff / 40f, -1f, 1f);
-        if (k < 0f) k *= slowDownFactor;   // pred tebou sa len mierne spomalí
+        if (k < 0f) k *= slowDownFactor;
 
         return 1f + k * rubberBand * ramp;
     }
@@ -115,11 +133,21 @@ public class EnemyCar : MonoBehaviour
         return Physics.Raycast(origin, Vector3.forward, lookAhead, ~0, QueryTriggerInteraction.Ignore);
     }
 
+    // pruh je voľný, ak pred nami nikto nie je a ani vedľa nás
+    bool LaneFree(float x)
+    {
+        if (LaneBlocked(x)) return false;
+
+        Vector3 center = new Vector3(x, transform.position.y, transform.position.z);
+        Vector3 half = new Vector3(0.9f, 0.45f, 3.5f);
+        return !CarCollision.AreaOccupied(transform, center, half);
+    }
+
     void TryChangeLane()
     {
         List<float> free = new List<float>();
         foreach (float l in lanes)
-            if (!Mathf.Approximately(l, targetX) && !LaneBlocked(l))
+            if (!Mathf.Approximately(l, targetX) && LaneFree(l))
                 free.Add(l);
 
         if (free.Count > 0)
