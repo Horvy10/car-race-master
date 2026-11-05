@@ -27,6 +27,12 @@ public class CarController : MonoBehaviour
         GetComponent<Rigidbody>().isKinematic = true;
     }
 
+    // Náraz do premávky (nekonečný režim): spomalí auto
+    public void ApplyCrash(float speedFactor)
+    {
+        CurrentSpeed *= speedFactor;
+    }
+
     void Update()
     {
         float steerInput = Input.GetAxis("Horizontal");
