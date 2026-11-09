@@ -631,13 +631,9 @@ MonoBehaviour:
   - 3
   spawnDistance: 90
   despawnBehind: 30
-  trafficSpeedRange: {x: 12, y: 22}
-  spawnIntervalEasy: 1.6
-  spawnIntervalHard: 0.7
   difficultyRampTime: 90
-  baseMaxSpeed: 30
-  maxSpeedCap: 45
   speedRampPerSecond: 0.2
+  debugLevel: 0
 --- !u!114 &2082813973 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2776196021022296017, guid: b1fa168071e09c8449a789fe02626f26, type: 3}

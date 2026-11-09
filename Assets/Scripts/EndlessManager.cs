@@ -21,15 +21,13 @@ public class EndlessManager : MonoBehaviour
     public float[] lanes = { -3f, -1f, 1f, 3f };
     public float spawnDistance = 90f;
     public float despawnBehind = 30f;
-    public Vector2 trafficSpeedRange = new Vector2(12f, 22f);
-    public float spawnIntervalEasy = 1.6f;   // na začiatku
-    public float spawnIntervalHard = 0.7f;   // po plnom rozbehnutí obtiažnosti
     public float difficultyRampTime = 90f;   // sekundy do plnej obtiažnosti
 
     [Header("Rýchlosť hráča")]
-    public float baseMaxSpeed = 30f;
-    public float maxSpeedCap = 45f;
     public float speedRampPerSecond = 0.2f;
+
+    [Header("Testovanie")]
+    public int debugLevel = 0;               // 0 = vypnuté, 1 až 5 = vynúti level bez menu
 
     // Hodnoty pre UI
     public EndlessState State { get; private set; } = EndlessState.Countdown;
@@ -38,9 +36,17 @@ public class EndlessManager : MonoBehaviour
     public int Distance { get; private set; }
     public float PlayTime { get; private set; }
     public bool IsInvulnerable { get { return invulnerableTimer > 0f; } }
+    public int Level { get { return GameSession.CurrentLevel; } }
 
     // Udalosť pre UI a Firebase: vzdialenosť (skóre), čas
     public event Action<int, float> OnGameOver;
+
+    // hodnoty z levelu
+    Vector2 trafficSpeedRange;
+    float spawnIntervalEasy;
+    float spawnIntervalHard;
+    float baseMaxSpeed;
+    float maxSpeedCap;
 
     readonly List<TrafficCar> traffic = new List<TrafficCar>();
     Renderer[] playerRenderers;
@@ -50,15 +56,33 @@ public class EndlessManager : MonoBehaviour
 
     void Start()
     {
+        if (debugLevel > 0) GameSession.CurrentLevel = debugLevel;
+        ApplyLevel();
+
         startZ = player.transform.position.z;
         Lives = startLives;
         CountdownRemaining = countdownTime;
-        player.maxSpeed = baseMaxSpeed;
 
         if (player.model != null)
             playerRenderers = player.model.GetComponentsInChildren<Renderer>();
 
+        // zmaž premávku, ktorá by mohla zostať v scéne
+        foreach (TrafficCar t in FindObjectsByType<TrafficCar>(FindObjectsSortMode.None))
+            Destroy(t.gameObject);
+
         SetRunning(false);
+    }
+
+    void ApplyLevel()
+    {
+        LevelData level = GameSession.Current;
+        trafficSpeedRange = new Vector2(level.trafficSpeedMin, level.trafficSpeedMax);
+        spawnIntervalEasy = level.spawnIntervalEasy;
+        spawnIntervalHard = level.spawnIntervalHard;
+
+        // základ berieme z auta (zahŕňa vylepšenia z obchodu)
+        baseMaxSpeed = player.maxSpeed;
+        maxSpeedCap = baseMaxSpeed * level.speedCapFactor;
     }
 
     void Update()
@@ -225,10 +249,10 @@ public class EndlessManager : MonoBehaviour
         style.normal.textColor = Color.white;
 
         if (State == EndlessState.Countdown)
-            GUI.Label(new Rect(Screen.width / 2f - 20, 100, 200, 50), Mathf.CeilToInt(CountdownRemaining).ToString(), style);
+            GUI.Label(new Rect(Screen.width / 2f - 20, 100, 400, 50), Mathf.CeilToInt(CountdownRemaining).ToString(), style);
         else if (State == EndlessState.Playing)
-            GUI.Label(new Rect(20, 20, 700, 50), "Životy: " + Lives + "   Vzdialenosť: " + Distance + " m", style);
+            GUI.Label(new Rect(20, 20, 900, 50), "Level " + Level + "   Životy: " + Lives + "   Vzdialenosť: " + Distance + " m", style);
         else
-            GUI.Label(new Rect(20, 20, 900, 100), "KONIEC  " + Distance + " m, čas " + PlayTime.ToString("F1") + " s  (R = znova)", style);
+            GUI.Label(new Rect(20, 20, 1000, 100), "KONIEC  " + Distance + " m, čas " + PlayTime.ToString("F1") + " s  (R = znova)", style);
     }
 }
