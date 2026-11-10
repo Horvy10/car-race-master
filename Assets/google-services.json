@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "98794828405",
+    "firebase_url": "https://unity1-6242e-default-rtdb.firebaseio.com",
+    "project_id": "unity1-6242e",
+    "storage_bucket": "unity1-6242e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98794828405:android:c6764ba75a2bcd8be0be3c",
+        "android_client_info": {
+          "package_name": "com.carracemaster.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2buJxqjKe2onzJWQi_DsXdSHTekIXktM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
