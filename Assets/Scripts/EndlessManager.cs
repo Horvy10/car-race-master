@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class EndlessManager : MonoBehaviour
 {
@@ -100,11 +99,6 @@ public class EndlessManager : MonoBehaviour
 
             case EndlessState.Playing:
                 UpdatePlaying();
-                break;
-
-            case EndlessState.GameOver:
-                if (Input.GetKeyDown(KeyCode.R))
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 break;
         }
     }
@@ -240,19 +234,5 @@ public class EndlessManager : MonoBehaviour
         if (playerRenderers == null) return;
         foreach (Renderer r in playerRenderers)
             r.enabled = visible;
-    }
-
-    // Dočasné zobrazenie, kým nebude hotové UI
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle(GUI.skin.label) { fontSize = 32, fontStyle = FontStyle.Bold };
-        style.normal.textColor = Color.white;
-
-        if (State == EndlessState.Countdown)
-            GUI.Label(new Rect(Screen.width / 2f - 20, 100, 400, 50), Mathf.CeilToInt(CountdownRemaining).ToString(), style);
-        else if (State == EndlessState.Playing)
-            GUI.Label(new Rect(20, 20, 900, 50), "Level " + Level + "   Životy: " + Lives + "   Vzdialenosť: " + Distance + " m", style);
-        else
-            GUI.Label(new Rect(20, 20, 1000, 100), "KONIEC  " + Distance + " m, čas " + PlayTime.ToString("F1") + " s  (R = znova)", style);
     }
 }

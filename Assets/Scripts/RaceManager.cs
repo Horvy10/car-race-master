@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class RaceManager : MonoBehaviour
 {
@@ -80,17 +79,6 @@ public class RaceManager : MonoBehaviour
                 RaceTime += Time.deltaTime;
                 UpdateRacing();
                 break;
-
-            case RaceState.Finished:
-                if (Input.GetKeyDown(KeyCode.R))
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-                if (Input.GetKeyDown(KeyCode.N) && PlayerWon && GameSession.CurrentLevel < GameSession.LevelCount)
-                {
-                    GameSession.CurrentLevel++;
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                }
-                break;
         }
     }
 
@@ -129,23 +117,5 @@ public class RaceManager : MonoBehaviour
         player.IsRunning = value;
         foreach (EnemyCar e in enemies)
             e.IsRunning = value;
-    }
-
-    // Dočasné zobrazenie, kým nebude hotové UI
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle(GUI.skin.label) { fontSize = 32, fontStyle = FontStyle.Bold };
-        style.normal.textColor = Color.white;
-
-        if (State == RaceState.Countdown)
-            GUI.Label(new Rect(Screen.width / 2f - 20, 100, 400, 50), Mathf.CeilToInt(CountdownRemaining).ToString(), style);
-        else if (State == RaceState.Racing)
-            GUI.Label(new Rect(20, 20, 800, 50), "Level " + Level + "   Poradie: " + PlayerPosition + "/" + TotalRacers + "   Čas: " + RaceTime.ToString("F1"), style);
-        else
-        {
-            string next = (PlayerWon && GameSession.CurrentLevel < GameSession.LevelCount) ? "  N = ďalší level" : "";
-            GUI.Label(new Rect(20, 20, 1200, 100),
-                (PlayerWon ? "VYHRAL SI!" : "PREHRAL SI") + "  " + FinalPosition + ". miesto, čas " + RaceTime.ToString("F1") + "  (R = znova" + next + ")", style);
-        }
     }
 }
