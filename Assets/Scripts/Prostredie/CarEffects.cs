@@ -8,8 +8,7 @@ public class CarEffects : MonoBehaviour
     public ParticleSystem smoke;
     public ParticleSystem nitro;
     public ParticleSystem[] dust;
-    public Renderer body;
-    public Material[] bodyVariants;       // premávka: náhodná farba z tejto sady
+    public GameObject[] models;           // premávka: náhodný typ auta (taxi, autobus...) z tejto sady
 
     CarController player;
     EnemyCar enemy;
@@ -21,8 +20,11 @@ public class CarEffects : MonoBehaviour
         enemy = GetComponentInParent<EnemyCar>();
         traffic = GetComponentInParent<TrafficCar>();
 
-        if (body != null && bodyVariants != null && bodyVariants.Length > 0)
-            body.sharedMaterial = bodyVariants[Random.Range(0, bodyVariants.Length)];
+        if (models != null && models.Length > 0)
+        {
+            int k = Random.Range(0, models.Length);
+            for (int i = 0; i < models.Length; i++) models[i].SetActive(i == k);
+        }
     }
 
     void Update()

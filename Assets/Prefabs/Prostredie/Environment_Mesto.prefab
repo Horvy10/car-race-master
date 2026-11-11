@@ -46,14 +46,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnvironmentTheme
   skybox: {fileID: 2100000, guid: 2b114430574789e4f9c925fece13738d, type: 2}
-  fogColor: {r: 0.98, g: 0.9, b: 0.76, a: 1}
-  fogStart: 50
-  fogEnd: 190
-  ambientSky: {r: 0.85, g: 0.82, b: 0.78, a: 1}
-  ambientEquator: {r: 0.7, g: 0.68, b: 0.62, a: 1}
-  ambientGround: {r: 0.45, g: 0.42, b: 0.38, a: 1}
+  fogColor: {r: 0.36, g: 0.64, b: 0.94, a: 1}
+  fogStart: 70
+  fogEnd: 200
+  ambientSky: {r: 0.82, g: 0.86, b: 0.95, a: 1}
+  ambientEquator: {r: 0.72, g: 0.7, b: 0.66, a: 1}
+  ambientGround: {r: 0.5, g: 0.42, b: 0.34, a: 1}
   sunColor: {r: 1, g: 0.96, b: 0.88, a: 1}
-  sunIntensity: 1.15
+  sunIntensity: 1.2
   sunRotation: {x: 50, y: -35, z: 0}
 --- !u!114 &8032986228677895009
 MonoBehaviour:
@@ -73,6 +73,8 @@ MonoBehaviour:
   - {fileID: 1288353601521585722, guid: d48cc565e301f42449e03fe36f3ef801, type: 3}
   - {fileID: 6319005634286542849, guid: 55b4465c1955fb347b9cc3f22b05471f, type: 3}
   - {fileID: 4598770159921625731, guid: 49b351a0621783940b46fb159d036ecb, type: 3}
-  segmentLength: 20
-  ahead: 10
-  behind: 3
+  - {fileID: 2213100118500685047, guid: dce10685e3dd338489e72eac3150354a, type: 3}
+  - {fileID: 128603981131302573, guid: 5d32e8fdecb85044f8583bcf95699b10, type: 3}
+  segmentLength: 40
+  ahead: 6
+  behind: 2
