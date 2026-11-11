@@ -93,6 +93,21 @@ public static class SamoSetup
         Debug.Log("Samo: prostredie pripojené do " + scene.name + ". Skontroluj a ulož scénu (Ctrl+S).");
     }
 
+    // Pripojí prostredie do herných scén z menu (preteky aj nekonečný) a uloží ich.
+    // Batchmode: Unity.exe -batchmode -projectPath . -executeMethod SamoSetup.AttachToGameScenes -quit
+    [MenuItem("Tools/Samo/3. Pripoj prostredie do herných scén")]
+    public static void AttachToGameScenes()
+    {
+        if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+        foreach (string name in new[] { MainMenuUI.RaceScene, MainMenuUI.EndlessScene })
+        {
+            Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/" + name + ".unity", OpenSceneMode.Single);
+            AttachToOpenScene();
+            EditorSceneManager.SaveScene(scene);
+        }
+    }
+
     // ───────────────────────── textúry ─────────────────────────
 
     static float H(int x, int y)
