@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6509358012288629198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5077906727621307641}
+  - component: {fileID: 4313162777023668237}
+  - component: {fileID: 745348840334819204}
+  m_Layer: 0
+  m_Name: Environment_Pust
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5077906727621307641
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509358012288629198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4313162777023668237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509358012288629198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16f6b506d9daf5a4bb93b356871b4c48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnvironmentTheme
+  skybox: {fileID: 2100000, guid: 8a97a0cbd541b094fb9a4a381d6e8ca8, type: 2}
+  fogColor: {r: 1, g: 0.74, b: 0.5, a: 1}
+  fogStart: 70
+  fogEnd: 200
+  ambientSky: {r: 0.95, g: 0.85, b: 0.72, a: 1}
+  ambientEquator: {r: 0.8, g: 0.7, b: 0.58, a: 1}
+  ambientGround: {r: 0.55, g: 0.45, b: 0.35, a: 1}
+  sunColor: {r: 1, g: 0.88, b: 0.7, a: 1}
+  sunIntensity: 1.3
+  sunRotation: {x: 40, y: 35, z: 0}
+--- !u!114 &745348840334819204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509358012288629198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06eb535a280feee42876cab34b42d7d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadSpawner
+  player: {fileID: 0}
+  segments:
+  - {fileID: 6861741325468983334, guid: ff47d490ef3044548b4e2cb4859203e2, type: 3}
+  - {fileID: 5635327487763958035, guid: ef008ab17feffaf4dadf2fb9b14dc59a, type: 3}
+  - {fileID: 7323939666846698039, guid: 9c2788ff9d4b6094cb09a38873a63de1, type: 3}
+  - {fileID: 2007428418133605757, guid: 601d66102b92cab46a196193936cf866, type: 3}
+  - {fileID: 2867891004241472173, guid: 990e5c6f397eb264ba5f418b61def4b4, type: 3}
+  - {fileID: 3089591944047377888, guid: 925b356ea36b1164689c8b02ce43fb5f, type: 3}
+  segmentLength: 40
+  ahead: 6
+  behind: 2
